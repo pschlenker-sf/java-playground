@@ -12,13 +12,33 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.7.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.7.0')
 }
 
-test {
+// test {
+//     useJUnitPlatform()
+// }
+
+tasks.withType(Test) {
     useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "started", "skipped", "passed", "failed"
+        showStandardStreams true
+    }
 }
 
 wrapper {
     gradleVersion = '6.8'
     distributionType = Wrapper.DistributionType.BIN
+}
+
+jar {
+    manifest {
+        attributes (
+            'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+            'Main-Class': 'com.galvanize.Application'
+        )
+    }
 }
